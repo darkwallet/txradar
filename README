@@ -1,0 +1,11 @@
+Make sure you have libbitcoin installed.
+
+  $ make
+  $ ./txradar
+
+Check out define.hpp to change the ports and other settings.
+
+To see only txradar output use:
+
+  $ ./txradar 2>&1 | grep txradar
+
