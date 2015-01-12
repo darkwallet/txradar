@@ -9,3 +9,7 @@ To see only txradar output use:
 
   $ ./txradar 2>&1 | grep txradar
 
+Also:
+
+  $ python test/listen.py
+
