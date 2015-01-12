@@ -12,8 +12,7 @@ public:
     ~txradar();
 
     void start(bool display_output, size_t threads, size_t number_hosts);
-
-    size_t total_connections() const;
+    void keep_pushing_count();
 
 private:
     typedef uint32_t node_id_type;

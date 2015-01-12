@@ -73,6 +73,25 @@ void txradar::start(bool display_output, size_t threads, size_t number_hosts)
     // Start connecting to p2p networks for broadcasting and monitor txs.
     start_p2p(p2p_);
 }
+void txradar::keep_pushing_count()
+{
+    // Keep pushing connections count
+    czmqpp::socket socket(ctx_, ZMQ_PUB);
+    BITCOIN_ASSERT(socket.self());
+    int bind_rc = socket.bind(
+        listen_transport(publish_connections_count_port));
+    BITCOIN_ASSERT(bind_rc != -1);
+    while (true)
+    {
+        czmqpp::message msg;
+        const auto data = bc::to_little_endian(p2p_.total_connections());
+        msg.append(bc::to_data_chunk(data));
+        // Send it.
+        bool rc = msg.send(socket);
+        BITCOIN_ASSERT(rc);
+        sleep(0.5);
+    }
+}
 
 void txradar::connection_started(
     const std::error_code& ec, bc::network::channel_ptr node)
@@ -149,10 +168,5 @@ void txradar::inventory_received(
     node->subscribe_inventory(
         std::bind(&txradar::inventory_received, this,
             _1, _2, node, node_id));
-}
-
-size_t txradar::total_connections() const
-{
-    return p2p_.total_connections();
 }
 
