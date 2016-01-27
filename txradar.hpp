@@ -17,9 +17,9 @@ public:
 private:
     typedef uint32_t node_id_type;
 
-    void connection_started(
+    bool connection_started(
         const std::error_code& ec, bc::network::channel_ptr node);
-    void inventory_received(
+    bool inventory_received(
         const std::error_code& ec, const bc::inventory_type& packet,
         bc::network::channel_ptr node, node_id_type node_id);
 
@@ -39,7 +39,7 @@ private:
     // Bitcoin network components.
     bc::network::hosts hosts_;
     bc::network::handshake handshake_;
-    bc::network::network network_;
+    bc::network::peer network_;
     bc::network::protocol p2p_;
 };
 

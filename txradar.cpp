@@ -93,14 +93,14 @@ void txradar::keep_pushing_count()
     }
 }
 
-void txradar::connection_started(
+bool txradar::connection_started(
     const std::error_code& ec, bc::network::channel_ptr node)
 {
     if (ec)
     {
         bc::log_warning(LOG_TXR)
             << "Couldn't start connection: " << ec.message();
-        return;
+        return false;
     }
     bc::log_info(LOG_TXR) << "Connection established.";
     node_id_type node_id =
@@ -112,6 +112,7 @@ void txradar::connection_started(
     // Resubscribe to new nodes.
     p2p_.subscribe_channel(
         std::bind(&txradar::connection_started, this, _1, _2));
+    return false;
 }
 
 template <typename Context, typename NodeID>
@@ -144,14 +145,14 @@ void notify_transaction(
     BITCOIN_ASSERT(rc);
 }
 
-void txradar::inventory_received(
+bool txradar::inventory_received(
     const std::error_code& ec, const bc::inventory_type& packet,
     bc::network::channel_ptr node, node_id_type node_id)
 {
     if (ec)
     {
         bc::log_error(LOG_TXR) << "inventory: " << ec.message();
-        return;
+        return false;
     }
     for (const bc::inventory_vector_type& ivec: packet.inventories)
     {
@@ -168,5 +169,6 @@ void txradar::inventory_received(
     node->subscribe_inventory(
         std::bind(&txradar::inventory_received, this,
             _1, _2, node, node_id));
+    return false;
 }
 
