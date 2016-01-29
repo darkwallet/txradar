@@ -110,9 +110,7 @@ bool txradar::connection_started(
         std::bind(&txradar::inventory_received, this,
             _1, _2, node, node_id));
     // Resubscribe to new nodes.
-    p2p_.subscribe_channel(
-        std::bind(&txradar::connection_started, this, _1, _2));
-    return false;
+    return true;
 }
 
 template <typename Context, typename NodeID>
@@ -166,9 +164,6 @@ bool txradar::inventory_received(
             bc::log_warning(LOG_TXR) << "Ignoring unknown inventory type";
     }
     // Resubscribe to 'inv' packets.
-    node->subscribe_inventory(
-        std::bind(&txradar::inventory_received, this,
-            _1, _2, node, node_id));
-    return false;
+    return true;
 }
 
